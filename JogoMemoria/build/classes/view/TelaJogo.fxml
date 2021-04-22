@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.TelaJogoController">
+   <children>
+      <Label layoutX="352.0" layoutY="33.0" text="Jogo da Memória">
+         <font>
+            <Font name="System Bold" size="36.0" />
+         </font>
+      </Label>
+      <Button fx:id="btnIniciar" layoutX="425.0" layoutY="611.0" mnemonicParsing="false" onAction="#btnIniciarClick" prefHeight="50.0" prefWidth="150.0" text="Iniciar" />
+      <GridPane layoutX="187.0" layoutY="104.0" prefHeight="492.0" prefWidth="615.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="123.0" minHeight="10.0" prefHeight="123.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="123.0" minHeight="10.0" prefHeight="123.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <ImageView fx:id="im1" fitHeight="126.0" fitWidth="188.0" onMouseClicked="#im1Clicked" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@../images/imagem0.jpg" />
+               </image></ImageView>
+            <ImageView fx:id="im2" fitHeight="126.0" fitWidth="188.0" onMouseClicked="#im2Clicked" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="1" />
+            <ImageView fx:id="im3" fitHeight="126.0" fitWidth="188.0" onMouseClicked="#im3Clicked" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="2" />
+            <ImageView fx:id="im4" fitHeight="126.0" fitWidth="188.0" onMouseClicked="#im4Clicked" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="3" />
+            <ImageView fx:id="im5" fitHeight="126.0" fitWidth="188.0" onMouseClicked="#im5Clicked" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" />
+            <ImageView fx:id="im6" fitHeight="126.0" fitWidth="188.0" onMouseClicked="#im6Clicked" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <ImageView fx:id="im7" fitHeight="126.0" fitWidth="188.0" onMouseClicked="#im7Clicked" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <ImageView fx:id="im8" fitHeight="126.0" fitWidth="188.0" onMouseClicked="#im8Clicked" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+         </children>
+      </GridPane>
+   </children>
+</AnchorPane>
