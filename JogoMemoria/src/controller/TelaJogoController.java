@@ -6,10 +6,12 @@
 package controller;
 
 import dao.GradeCartas;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -27,7 +29,8 @@ import model.Carta;
 public class TelaJogoController implements Initializable {
     
     private GradeCartas grade;
-
+    Image imagem;
+    
     @FXML
     private Button btnIniciar;
     @FXML
@@ -61,60 +64,66 @@ public class TelaJogoController implements Initializable {
         this.grade.carregarGrade();
         
         Carta[][] grad = this.grade.getGrade();
-        System.out.println("Aqui");
         
+        File file = new File("D:\\Documentos\\Graduação\\Programação Orientada a Objetos\\TP2\\TP2-POO\\JogoMemoria\\src\\images\\back.jpg");
+        imagem = new Image(file.toURI().toString());
         
-        // Testes
-        Image image = null;
-        try {
-            image = new Image(new FileInputStream("D:\\Documentos\\Graduação\\Programação Orientada a Objetos\\TP2\\JogoMemoria\\src\\images\\imagem1.jpg"));
-        } catch (FileNotFoundException ex) {
-            System.out.println("ERRO!");
-        }
-        System.out.println(image.toString());
-        //
-        
-        this.im1.setImage(grad[0][0].getImagem());
-        this.im2.setImage(grad[0][1].getImagem());
-        this.im3.setImage(grad[1][0].getImagem());
-        this.im4.setImage(grad[1][1].getImagem());
-        this.im5.setImage(grad[2][0].getImagem());
-        this.im6.setImage(grad[2][1].getImagem());
-        this.im7.setImage(grad[3][0].getImagem());
-        this.im8.setImage(grad[3][1].getImagem());        
-        
+        this.im1.setImage(imagem);
+        this.im2.setImage(imagem);
+        this.im3.setImage(imagem);
+        this.im4.setImage(imagem);
+        this.im5.setImage(imagem);
+        this.im6.setImage(imagem);
+        this.im7.setImage(imagem);
+        this.im8.setImage(imagem);
     }
 
     @FXML
     private void im1Clicked(MouseEvent event) {
+        this.im1.setImage(this.grade.getGrade()[0][0].getImagem());
+        this.grade.getGrade()[0][0].alterarStatus();
     }
 
     @FXML
     private void im2Clicked(MouseEvent event) {
+        this.im2.setImage(this.grade.getGrade()[1][0].getImagem());
+        this.grade.getGrade()[1][0].alterarStatus();
     }
 
     @FXML
     private void im3Clicked(MouseEvent event) {
+        this.im3.setImage(this.grade.getGrade()[2][0].getImagem());
+        this.grade.getGrade()[2][0].alterarStatus();
     }
 
     @FXML
     private void im4Clicked(MouseEvent event) {
+        this.im4.setImage(this.grade.getGrade()[3][0].getImagem());
+        this.grade.getGrade()[3][0].alterarStatus();
     }
 
     @FXML
     private void im5Clicked(MouseEvent event) {
+        this.im5.setImage(this.grade.getGrade()[0][1].getImagem());
+        this.grade.getGrade()[0][1].alterarStatus();
     }
 
     @FXML
     private void im6Clicked(MouseEvent event) {
+        this.im6.setImage(this.grade.getGrade()[1][1].getImagem());
+        this.grade.getGrade()[1][1].alterarStatus();
     }
 
     @FXML
     private void im7Clicked(MouseEvent event) {
+        this.im7.setImage(this.grade.getGrade()[2][1].getImagem());
+        this.grade.getGrade()[2][1].alterarStatus();
     }
 
     @FXML
     private void im8Clicked(MouseEvent event) {
+        this.im8.setImage(this.grade.getGrade()[3][1].getImagem());
+        this.grade.getGrade()[3][1].alterarStatus();
     }
     
 }

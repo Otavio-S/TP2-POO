@@ -26,7 +26,8 @@ public class Carta {
     }
     
     public void alterarStatus() {
-        this.status = true;
+        if(this.status == true) this.status = false;
+        else                    this.status = true;
     }
     
     public void encontrada() {
@@ -37,7 +38,7 @@ public class Carta {
         return imagem;
     }
 
-    public boolean isStatus() {
+    public boolean getStatus() {
         return status;
     }
 

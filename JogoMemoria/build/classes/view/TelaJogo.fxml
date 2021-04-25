@@ -8,30 +8,27 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.TelaJogoController">
+<AnchorPane id="AnchorPane" prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.TelaJogoController">
    <children>
       <Label layoutX="352.0" layoutY="33.0" text="Jogo da Memória">
          <font>
             <Font name="System Bold" size="36.0" />
          </font>
       </Label>
-      <Button fx:id="btnIniciar" layoutX="425.0" layoutY="611.0" mnemonicParsing="false" onAction="#btnIniciarClick" prefHeight="50.0" prefWidth="150.0" text="Iniciar" />
-      <GridPane layoutX="187.0" layoutY="104.0" prefHeight="492.0" prefWidth="615.0">
+      <Button fx:id="btnIniciar" layoutX="426.0" layoutY="707.0" mnemonicParsing="false" onAction="#btnIniciarClick" prefHeight="50.0" prefWidth="150.0" text="Iniciar" />
+      <GridPane layoutX="194.0" layoutY="118.0" prefHeight="564.0" prefWidth="615.0">
         <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
         </columnConstraints>
         <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="123.0" minHeight="10.0" prefHeight="123.0" vgrow="SOMETIMES" />
-          <RowConstraints maxHeight="123.0" minHeight="10.0" prefHeight="123.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="147.0" minHeight="10.0" prefHeight="145.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="142.0" minHeight="10.0" prefHeight="140.0" vgrow="SOMETIMES" />
+          <RowConstraints maxHeight="139.0" minHeight="10.0" prefHeight="129.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="140.0" minHeight="10.0" prefHeight="130.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <ImageView fx:id="im1" fitHeight="126.0" fitWidth="188.0" onMouseClicked="#im1Clicked" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@../images/imagem0.jpg" />
-               </image></ImageView>
+            <ImageView fx:id="im1" fitHeight="126.0" fitWidth="188.0" onMouseClicked="#im1Clicked" pickOnBounds="true" preserveRatio="true" />
             <ImageView fx:id="im2" fitHeight="126.0" fitWidth="188.0" onMouseClicked="#im2Clicked" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="1" />
             <ImageView fx:id="im3" fitHeight="126.0" fitWidth="188.0" onMouseClicked="#im3Clicked" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="2" />
             <ImageView fx:id="im4" fitHeight="126.0" fitWidth="188.0" onMouseClicked="#im4Clicked" pickOnBounds="true" preserveRatio="true" GridPane.rowIndex="3" />
