@@ -38,7 +38,7 @@ public class GradeCartas {
             if(grade[aleX][aleY] == null) {
                 try {
                     String path = "D:\\Documentos\\Graduação\\Programação Orientada a Objetos\\TP2\\TP2-POO\\JogoMemoria\\src\\images\\imagem"+(quant%4)+".jpg";
-                    grade[aleX][aleY] = new Carta(path);
+                    grade[aleX][aleY] = new Carta(path, quant%4);
                 } catch (IOException ex) {
                     System.out.println("Endereço inválido! "+ex);
                 }

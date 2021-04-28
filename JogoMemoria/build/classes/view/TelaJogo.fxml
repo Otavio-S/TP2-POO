@@ -38,5 +38,25 @@
             <ImageView fx:id="im8" fitHeight="126.0" fitWidth="188.0" onMouseClicked="#im8Clicked" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
          </children>
       </GridPane>
+      <Label fx:id="lblJogadorAtual" layoutX="61.0" layoutY="38.0" prefHeight="45.0" prefWidth="188.0" textFill="RED">
+         <font>
+            <Font size="30.0" />
+         </font></Label>
+      <GridPane layoutX="760.0" layoutY="30.0">
+        <columnConstraints>
+          <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label text="Jogador" />
+            <Label text="Computador" GridPane.columnIndex="1" />
+            <Label fx:id="lblPontosJogador" prefHeight="21.0" prefWidth="0.0" GridPane.rowIndex="1" />
+            <Label fx:id="lblPontosComputador" prefHeight="21.0" prefWidth="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+         </children>
+      </GridPane>
    </children>
 </AnchorPane>

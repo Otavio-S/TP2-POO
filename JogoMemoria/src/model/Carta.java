@@ -14,20 +14,27 @@ import javafx.scene.image.Image;
  * @author Otavio
  */
 public class Carta {
+    int id;
     private Image imagem;
-    private boolean status;
+    private boolean statusAtual;
+    private boolean virada;
     private boolean encontrouPar;
     
-    public Carta(String path) throws IOException {
+    public Carta(String path, int id) throws IOException {
         File file = new File(path);
+        this.id = id;
         this.imagem = new Image(file.toURI().toString());
-        this.status = false;
+        this.statusAtual = false;
+        this.virada = false;
         this.encontrouPar = false;
     }
     
-    public void alterarStatus() {
-        if(this.status == true) this.status = false;
-        else                    this.status = true;
+    public void alterarStatus(boolean situacao) {
+        this.statusAtual = situacao;
+    }
+    
+    public void virar() {
+        this.statusAtual = true;
     }
     
     public void encontrada() {
@@ -37,9 +44,17 @@ public class Carta {
     public Image getImagem() {
         return imagem;
     }
+    
+    public int getId() {
+        return id;
+    }
 
     public boolean getStatus() {
-        return status;
+        return statusAtual;
+    }
+    
+    public boolean isVirada() {
+        return virada;
     }
 
     public boolean isEncontrouPar() {
