@@ -34,7 +34,7 @@ public class Carta {
     }
     
     public void virar() {
-        this.statusAtual = true;
+        this.virada = true;
     }
     
     public void encontrada() {

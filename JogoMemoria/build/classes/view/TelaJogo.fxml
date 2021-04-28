@@ -52,8 +52,8 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Label text="Jogador" />
-            <Label text="Computador" GridPane.columnIndex="1" />
+            <Label fx:id="lblJogador" text="Jogador" visible="false" />
+            <Label fx:id="lblComp" text="Computador" visible="false" GridPane.columnIndex="1" />
             <Label fx:id="lblPontosJogador" prefHeight="21.0" prefWidth="0.0" GridPane.rowIndex="1" />
             <Label fx:id="lblPontosComputador" prefHeight="21.0" prefWidth="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>

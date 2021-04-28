@@ -10,12 +10,10 @@ import java.io.File;
 import static java.lang.Math.random;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -32,7 +30,7 @@ public class TelaJogoController implements Initializable {
     
     private GradeCartas grade;
     Image imagem;
-    int pontosComp, pontosUser, vez, paresEncontrados;
+    int pontosComp, pontosUser, quantidadeVirada, paresEncontrados;
     
     @FXML
     private Button btnIniciar;
@@ -58,6 +56,10 @@ public class TelaJogoController implements Initializable {
     private Label lblPontosJogador;
     @FXML
     private Label lblPontosComputador;
+    @FXML
+    private Label lblJogador;
+    @FXML
+    private Label lblComp;
 
     /**
      * Initializes the controller class.
@@ -70,12 +72,18 @@ public class TelaJogoController implements Initializable {
 
     @FXML
     private void btnIniciarClick(ActionEvent event) {
+        this.lblComp.setVisible(true);
+        this.lblJogador.setVisible(true);
+        this.inicializarCampos();
+    }
+    
+    private void inicializarCampos() {
         this.grade.carregarGrade();
         this.pontosComp = 0;
+        this.quantidadeVirada = 0;
         this.lblPontosComputador.setText(String.valueOf(this.pontosComp));
         this.pontosUser = 0;
         this.lblPontosJogador.setText(String.valueOf(this.pontosUser));
-        this.vez = 0;
         this.paresEncontrados = 0;
         this.lblJogadorAtual.setText("Usuário");
         
@@ -96,7 +104,29 @@ public class TelaJogoController implements Initializable {
         this.im8.setImage(imagem);
     }
     
-    private void jogadaComputador() {
+    private void finalizar() {
+        String header, text;
+        
+        if(this.pontosComp > this.pontosUser) {
+            header = "Computador Venceu!";
+            text = "Computador "+this.pontosComp+" X "+this.pontosUser+" Usuário";
+        } else if(this.pontosComp < this.pontosUser) {
+            header = "Usuário Venceu!";
+            text = "Usuário "+this.pontosUser+" X "+this.pontosComp+" Computador";
+        } else {
+            header = "Empate!";
+            text = "Usuário "+this.pontosUser+" X "+this.pontosComp+" Computador";
+        }
+        
+        Alert errorAlert = new Alert(Alert.AlertType.WARNING);
+            errorAlert.setTitle("Jogo finalizado!");
+            errorAlert.setHeaderText(header);
+            errorAlert.setContentText(text);
+            errorAlert.showAndWait();
+        this.inicializarCampos();
+    }
+    
+    private synchronized void jogadaComputador() {
         this.lblJogadorAtual.setText("Computador");
         
         for(int i=0; i<4; i++) {
@@ -106,7 +136,7 @@ public class TelaJogoController implements Initializable {
                     for(int k=0; k<4; k++) {
                         for(int l=0; l<2; l++) {
                             if(i == k && j==l) continue;
-                            if(!this.grade.getGrade()[i][j].isVirada()) continue;
+                            if(!this.grade.getGrade()[k][l].isVirada()) continue;
                             if(this.grade.getGrade()[i][j].getId() == this.grade.getGrade()[k][l].getId()) {
                                 this.marcarCarta(i, j);
                                 this.paresEncontrados++;
@@ -146,7 +176,8 @@ public class TelaJogoController implements Initializable {
                 }
             }
         }
-        System.out.println("SAIR");
+        
+        if(this.paresEncontrados==4) this.finalizar();
         
         // WAIT
         
@@ -241,6 +272,7 @@ public class TelaJogoController implements Initializable {
     }  
     
     private void virarCartas() {
+        this.quantidadeVirada = 0;
         if(!this.grade.getGrade()[0][0].isEncontrouPar()) {
             this.im1.setImage(this.imagem);
             this.grade.getGrade()[0][0].alterarStatus(false);
@@ -282,73 +314,288 @@ public class TelaJogoController implements Initializable {
         
         this.im1.setImage(this.grade.getGrade()[0][0].getImagem());
         this.grade.getGrade()[0][0].alterarStatus(true);
+        this.grade.getGrade()[0][0].virar();
+        this.quantidadeVirada++;
         
         for(int i=0; i<4; i++) {
             for(int j=0; j<2; j++) {
                 if(i==0 && j==0) continue;
                 if(this.grade.getGrade()[i][j].getStatus()) {
+                    System.out.println("0 0");
+                    System.out.println(i+" "+j);
                     if(this.grade.getGrade()[i][j].getId() == this.grade.getGrade()[0][0].getId()) {
                         this.grade.getGrade()[i][j].encontrada();
                         this.grade.getGrade()[0][0].encontrada();
                         this.paresEncontrados++;
                         this.pontosUser++;
                         this.lblPontosJogador.setText(String.valueOf(this.pontosUser));
-                        if(this.vez%2==0) this.pontosUser++;
-                        else              this.pontosComp++;
+                        if(this.paresEncontrados==4) this.finalizar();
+                        this.quantidadeVirada = 0;
                         return;
-                    } else {
-                        // Wait
-                        
-                        this.virarCartas();
-                        this.vez++;
-                        this.jogadaComputador();
                     }
                 }
             }
-        }     
+        }
+        
+        // WAIT
+        
+        if(this.quantidadeVirada==2) {
+            this.virarCartas();
+            this.jogadaComputador();
+        }
         
     }
 
     @FXML
     private void im2Clicked(MouseEvent event) {
+        if(this.grade.getGrade()[1][0].isEncontrouPar()) return;
+        if(this.grade.getGrade()[1][0].getStatus())      return;
+        
         this.im2.setImage(this.grade.getGrade()[1][0].getImagem());
         this.grade.getGrade()[1][0].alterarStatus(true);
+        this.grade.getGrade()[1][0].virar();
+        this.quantidadeVirada++;
+        
+        for(int i=0; i<4; i++) {
+            for(int j=0; j<2; j++) {
+                if(i==1 && j==0) continue;
+                if(this.grade.getGrade()[i][j].getStatus()) {
+                    if(this.grade.getGrade()[i][j].getId() == this.grade.getGrade()[1][0].getId()) {
+                        this.grade.getGrade()[i][j].encontrada();
+                        this.grade.getGrade()[1][0].encontrada();
+                        this.paresEncontrados++;
+                        this.pontosUser++;
+                        this.lblPontosJogador.setText(String.valueOf(this.pontosUser));
+                        if(this.paresEncontrados==4) this.finalizar();
+                        this.quantidadeVirada = 0;
+                        return;
+                    }
+                }
+            }
+        }
+        
+        // WAIT
+        
+        if(this.quantidadeVirada==2) {
+            this.virarCartas();
+            this.jogadaComputador();
+        }
     }
 
     @FXML
     private void im3Clicked(MouseEvent event) {
+        if(this.grade.getGrade()[2][0].isEncontrouPar()) return;
+        if(this.grade.getGrade()[2][0].getStatus())      return;
+        
         this.im3.setImage(this.grade.getGrade()[2][0].getImagem());
         this.grade.getGrade()[2][0].alterarStatus(true);
+        this.grade.getGrade()[2][0].virar();
+        this.quantidadeVirada++;
+        
+        for(int i=0; i<4; i++) {
+            for(int j=0; j<2; j++) {
+                if(i==2 && j==0) continue;
+                if(this.grade.getGrade()[i][j].getStatus()) {
+                    if(this.grade.getGrade()[i][j].getId() == this.grade.getGrade()[2][0].getId()) {
+                        this.grade.getGrade()[i][j].encontrada();
+                        this.grade.getGrade()[2][0].encontrada();
+                        this.paresEncontrados++;
+                        this.pontosUser++;
+                        this.lblPontosJogador.setText(String.valueOf(this.pontosUser));
+                        if(this.paresEncontrados==4) this.finalizar();
+                        this.quantidadeVirada = 0;
+                        return;
+                    }
+                }
+            }
+        }  
+        
+        // WAIT
+        
+        if(this.quantidadeVirada==2) {
+            this.virarCartas();
+            this.jogadaComputador();
+        }
     }
 
     @FXML
     private void im4Clicked(MouseEvent event) {
+        if(this.grade.getGrade()[3][0].isEncontrouPar()) return;
+        if(this.grade.getGrade()[3][0].getStatus())      return;
+        
         this.im4.setImage(this.grade.getGrade()[3][0].getImagem());
         this.grade.getGrade()[3][0].alterarStatus(true);
+        this.grade.getGrade()[3][0].virar();
+        this.quantidadeVirada++;
+        
+        for(int i=0; i<4; i++) {
+            for(int j=0; j<2; j++) {
+                if(i==3 && j==0) continue;
+                if(this.grade.getGrade()[i][j].getStatus()) {
+                    if(this.grade.getGrade()[i][j].getId() == this.grade.getGrade()[3][0].getId()) {
+                        this.grade.getGrade()[i][j].encontrada();
+                        this.grade.getGrade()[3][0].encontrada();
+                        this.paresEncontrados++;
+                        this.pontosUser++;
+                        this.lblPontosJogador.setText(String.valueOf(this.pontosUser));
+                        if(this.paresEncontrados==4) this.finalizar();
+                        this.quantidadeVirada = 0;
+                        return;
+                    }
+                }
+            }
+        }
+        
+        // WAIT
+        
+        if(this.quantidadeVirada==2) {
+            this.virarCartas();
+            this.jogadaComputador();
+        }
     }
 
     @FXML
     private void im5Clicked(MouseEvent event) {
+        if(this.grade.getGrade()[0][1].isEncontrouPar()) return;
+        if(this.grade.getGrade()[0][1].getStatus())      return;
+        
         this.im5.setImage(this.grade.getGrade()[0][1].getImagem());
         this.grade.getGrade()[0][1].alterarStatus(true);
+        this.grade.getGrade()[0][1].virar();
+        this.quantidadeVirada++;
+        
+        for(int i=0; i<4; i++) {
+            for(int j=0; j<2; j++) {
+                if(i==0 && j==1) continue;
+                if(this.grade.getGrade()[i][j].getStatus()) {
+                    if(this.grade.getGrade()[i][j].getId() == this.grade.getGrade()[0][1].getId()) {
+                        this.grade.getGrade()[i][j].encontrada();
+                        this.grade.getGrade()[0][1].encontrada();
+                        this.paresEncontrados++;
+                        this.pontosUser++;
+                        this.lblPontosJogador.setText(String.valueOf(this.pontosUser));
+                        if(this.paresEncontrados==4) this.finalizar();
+                        this.quantidadeVirada = 0;
+                        return;
+                    }
+                }
+            }
+        }
+        
+        // WAIT
+        
+        if(this.quantidadeVirada==2) {
+            this.virarCartas();
+            this.jogadaComputador();
+        }
     }
 
     @FXML
     private void im6Clicked(MouseEvent event) {
+        if(this.grade.getGrade()[1][1].isEncontrouPar()) return;
+        if(this.grade.getGrade()[1][1].getStatus())      return;
+        
         this.im6.setImage(this.grade.getGrade()[1][1].getImagem());
         this.grade.getGrade()[1][1].alterarStatus(true);
+        this.grade.getGrade()[1][1].virar();
+        this.quantidadeVirada++;
+        
+        for(int i=0; i<4; i++) {
+            for(int j=0; j<2; j++) {
+                if(i==1 && j==1) continue;
+                if(this.grade.getGrade()[i][j].getStatus()) {
+                    if(this.grade.getGrade()[i][j].getId() == this.grade.getGrade()[1][1].getId()) {
+                        this.grade.getGrade()[i][j].encontrada();
+                        this.grade.getGrade()[1][1].encontrada();
+                        this.paresEncontrados++;
+                        this.pontosUser++;
+                        this.lblPontosJogador.setText(String.valueOf(this.pontosUser));
+                        if(this.paresEncontrados==4) this.finalizar();
+                        this.quantidadeVirada = 0;
+                        return;
+                    }
+                }
+            }
+        }
+        
+        // WAIT
+        
+        if(this.quantidadeVirada==2) {
+            this.virarCartas();
+            this.jogadaComputador();
+        }
     }
 
     @FXML
     private void im7Clicked(MouseEvent event) {
+        if(this.grade.getGrade()[2][1].isEncontrouPar()) return;
+        if(this.grade.getGrade()[2][1].getStatus())      return;
+        
         this.im7.setImage(this.grade.getGrade()[2][1].getImagem());
         this.grade.getGrade()[2][1].alterarStatus(true);
+        this.grade.getGrade()[2][1].virar();
+        this.quantidadeVirada++;
+        
+        for(int i=0; i<4; i++) {
+            for(int j=0; j<2; j++) {
+                if(i==2 && j==1) continue;
+                if(this.grade.getGrade()[i][j].getStatus()) {
+                    if(this.grade.getGrade()[i][j].getId() == this.grade.getGrade()[2][1].getId()) {
+                        this.grade.getGrade()[i][j].encontrada();
+                        this.grade.getGrade()[2][1].encontrada();
+                        this.paresEncontrados++;
+                        this.pontosUser++;
+                        this.lblPontosJogador.setText(String.valueOf(this.pontosUser));
+                        if(this.paresEncontrados==4) this.finalizar();
+                        this.quantidadeVirada = 0;
+                        return;
+                    }
+                }
+            }
+        }
+        
+        // WAIT
+        
+        if(this.quantidadeVirada==2) {
+            this.virarCartas();
+            this.jogadaComputador();
+        }
     }
 
     @FXML
     private void im8Clicked(MouseEvent event) {
+        if(this.grade.getGrade()[3][1].isEncontrouPar()) return;
+        if(this.grade.getGrade()[3][1].getStatus())      return;
+        
         this.im8.setImage(this.grade.getGrade()[3][1].getImagem());
         this.grade.getGrade()[3][1].alterarStatus(true);
+        this.grade.getGrade()[3][1].virar();
+        this.quantidadeVirada++;
+        
+        for(int i=0; i<4; i++) {
+            for(int j=0; j<2; j++) {
+                if(i==3 && j==1) continue;
+                if(this.grade.getGrade()[i][j].getStatus()) {
+                    if(this.grade.getGrade()[i][j].getId() == this.grade.getGrade()[3][1].getId()) {
+                        this.grade.getGrade()[i][j].encontrada();
+                        this.grade.getGrade()[3][1].encontrada();
+                        this.paresEncontrados++;
+                        this.pontosUser++;
+                        this.lblPontosJogador.setText(String.valueOf(this.pontosUser));
+                        if(this.paresEncontrados==4) this.finalizar();
+                        this.quantidadeVirada = 0;
+                        return;
+                    }
+                }
+            }
+        }
+        
+        // WAIT
+        
+        if(this.quantidadeVirada==2) {
+            this.virarCartas();
+            this.jogadaComputador();
+        }
     }
     
 }
