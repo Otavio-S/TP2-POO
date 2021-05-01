@@ -10,6 +10,9 @@ import java.io.File;
 import static java.lang.Math.random;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -60,6 +63,8 @@ public class TelaJogoController implements Initializable {
     private Label lblJogador;
     @FXML
     private Label lblComp;
+    @FXML
+    private Label lblQuem;
 
     /**
      * Initializes the controller class.
@@ -74,6 +79,7 @@ public class TelaJogoController implements Initializable {
     private void btnIniciarClick(ActionEvent event) {
         this.lblComp.setVisible(true);
         this.lblJogador.setVisible(true);
+        this.lblQuem.setVisible(true);
         this.inicializarCampos();
     }
     
@@ -91,7 +97,7 @@ public class TelaJogoController implements Initializable {
         
         Carta[][] grad = this.grade.getGrade();
         
-        File file = new File("D:\\Documentos\\Graduação\\Programação Orientada a Objetos\\TP2\\TP2-POO\\JogoMemoria\\src\\images\\back.jpg");
+        File file = new File("src/images/back.jpg");
         imagem = new Image(file.toURI().toString());
         
         this.im1.setImage(imagem);
@@ -106,7 +112,7 @@ public class TelaJogoController implements Initializable {
     
     private void finalizar() {
         String header, text;
-        
+
         if(this.pontosComp > this.pontosUser) {
             header = "Computador Venceu!";
             text = "Computador "+this.pontosComp+" X "+this.pontosUser+" Usuário";
@@ -126,8 +132,18 @@ public class TelaJogoController implements Initializable {
         this.inicializarCampos();
     }
     
+    private final Runnable t1 = () -> {
+        try{
+            jogadaComputador();
+        } catch (Exception e){}     
+    };
+    
     private synchronized void jogadaComputador() {
-        this.lblJogadorAtual.setText("Computador");
+        try {
+            this.wait(1000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(TelaJogoController.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         for(int i=0; i<4; i++) {
             for(int j=0; j<2; j++) {
@@ -141,7 +157,16 @@ public class TelaJogoController implements Initializable {
                                 this.marcarCarta(i, j);
                                 this.paresEncontrados++;
                                 this.pontosComp++;
-                                this.lblPontosComputador.setText(String.valueOf(this.pontosComp));
+                                Platform.runLater(
+                                    () -> {
+                                      lblPontosComputador.setText(String.valueOf(this.pontosComp));
+                                    }
+                                );
+                                try {
+                                    this.wait(2000);
+                                } catch (InterruptedException ex) {
+                                    Logger.getLogger(TelaJogoController.class.getName()).log(Level.SEVERE, null, ex);
+                                }
                             }
                         }
                     }
@@ -161,6 +186,11 @@ public class TelaJogoController implements Initializable {
                     primY = aleY;
                 }
                 this.mostrarCarta(aleX, aleY);
+                try {
+                    this.wait(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(TelaJogoController.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 count++;
             }
 
@@ -169,20 +199,44 @@ public class TelaJogoController implements Initializable {
                     this.marcarCarta(aleX, aleY);
                     this.paresEncontrados++;
                     this.pontosComp++;
-                    this.lblPontosComputador.setText(String.valueOf(this.pontosComp));
+                    Platform.runLater(
+                        () -> {
+                          lblPontosComputador.setText(String.valueOf(this.pontosComp));
+                        }
+                    );
                     primX = -1;
                     primY = -1;
                     count = 0;
+                    try {
+                        this.wait(2000);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(TelaJogoController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 }
             }
         }
         
-        if(this.paresEncontrados==4) this.finalizar();
-        
-        // WAIT
-        
-        this.virarCartas();
-        this.lblJogadorAtual.setText("Usuário");
+        if(this.paresEncontrados!=4) {
+            try {
+                this.wait(3000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(TelaJogoController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            this.virarCartas();
+            Platform.runLater(
+                () -> {
+                  lblJogadorAtual.setText("Usuário");
+                }
+            );
+            
+        } else {
+            Platform.runLater(
+                () -> {
+                  if(this.paresEncontrados==4) this.finalizar();
+                }
+            );
+        }
         
     }
     
@@ -190,34 +244,42 @@ public class TelaJogoController implements Initializable {
         if(this.grade.getGrade()[0][0].getId() == this.grade.getGrade()[i][j].getId()) {
             this.im1.setImage(this.grade.getGrade()[0][0].getImagem());
             this.grade.getGrade()[0][0].alterarStatus(true);
+            this.grade.getGrade()[0][0].virar();
             
         } else if(this.grade.getGrade()[1][0].getId() == this.grade.getGrade()[i][j].getId()) {
             this.im2.setImage(this.grade.getGrade()[1][0].getImagem());
             this.grade.getGrade()[1][0].alterarStatus(true);
+            this.grade.getGrade()[1][0].virar();
             
         } else if(this.grade.getGrade()[2][0].getId() == this.grade.getGrade()[i][j].getId()) {
             this.im3.setImage(this.grade.getGrade()[2][0].getImagem());
             this.grade.getGrade()[2][0].alterarStatus(true);
+            this.grade.getGrade()[2][0].virar();
             
         } else if(this.grade.getGrade()[3][0].getId() == this.grade.getGrade()[i][j].getId()) {
             this.im4.setImage(this.grade.getGrade()[3][0].getImagem());
             this.grade.getGrade()[3][0].alterarStatus(true);
+            this.grade.getGrade()[3][0].virar();
             
         } else if(this.grade.getGrade()[0][1].getId() == this.grade.getGrade()[i][j].getId()) {
             this.im5.setImage(this.grade.getGrade()[0][1].getImagem());
             this.grade.getGrade()[0][1].alterarStatus(true);
+            this.grade.getGrade()[0][1].virar();
             
         } else if(this.grade.getGrade()[1][1].getId() == this.grade.getGrade()[i][j].getId()) {
             this.im6.setImage(this.grade.getGrade()[1][1].getImagem());
             this.grade.getGrade()[1][1].alterarStatus(true);
+            this.grade.getGrade()[1][1].virar();
             
         } else if(this.grade.getGrade()[2][1].getId() == this.grade.getGrade()[i][j].getId()) {
             this.im7.setImage(this.grade.getGrade()[2][1].getImagem());
             this.grade.getGrade()[2][1].alterarStatus(true);
+            this.grade.getGrade()[2][1].virar();
             
         } else if(this.grade.getGrade()[3][1].getId() == this.grade.getGrade()[i][j].getId()) {
             this.im8.setImage(this.grade.getGrade()[3][1].getImagem());
             this.grade.getGrade()[3][1].alterarStatus(true);
+            this.grade.getGrade()[3][1].virar();
         }
     }  
     
@@ -308,9 +370,10 @@ public class TelaJogoController implements Initializable {
     }    
     
     @FXML
-    private synchronized void im1Clicked(MouseEvent event) {
+    private void im1Clicked(MouseEvent event) {
         if(this.grade.getGrade()[0][0].isEncontrouPar()) return;
         if(this.grade.getGrade()[0][0].getStatus())      return;
+        if(this.lblJogadorAtual.getText().equals("Computador")) return;
         
         this.im1.setImage(this.grade.getGrade()[0][0].getImagem());
         this.grade.getGrade()[0][0].alterarStatus(true);
@@ -321,8 +384,6 @@ public class TelaJogoController implements Initializable {
             for(int j=0; j<2; j++) {
                 if(i==0 && j==0) continue;
                 if(this.grade.getGrade()[i][j].getStatus()) {
-                    System.out.println("0 0");
-                    System.out.println(i+" "+j);
                     if(this.grade.getGrade()[i][j].getId() == this.grade.getGrade()[0][0].getId()) {
                         this.grade.getGrade()[i][j].encontrada();
                         this.grade.getGrade()[0][0].encontrada();
@@ -337,19 +398,13 @@ public class TelaJogoController implements Initializable {
             }
         }
         
-        // WAIT
-        
-        if(this.quantidadeVirada==2) {
-            this.virarCartas();
-            this.jogadaComputador();
-        }
-        
     }
 
     @FXML
     private void im2Clicked(MouseEvent event) {
         if(this.grade.getGrade()[1][0].isEncontrouPar()) return;
         if(this.grade.getGrade()[1][0].getStatus())      return;
+        if(this.lblJogadorAtual.getText().equals("Computador")) return;
         
         this.im2.setImage(this.grade.getGrade()[1][0].getImagem());
         this.grade.getGrade()[1][0].alterarStatus(true);
@@ -374,18 +429,13 @@ public class TelaJogoController implements Initializable {
             }
         }
         
-        // WAIT
-        
-        if(this.quantidadeVirada==2) {
-            this.virarCartas();
-            this.jogadaComputador();
-        }
     }
 
     @FXML
     private void im3Clicked(MouseEvent event) {
         if(this.grade.getGrade()[2][0].isEncontrouPar()) return;
         if(this.grade.getGrade()[2][0].getStatus())      return;
+        if(this.lblJogadorAtual.getText().equals("Computador")) return;
         
         this.im3.setImage(this.grade.getGrade()[2][0].getImagem());
         this.grade.getGrade()[2][0].alterarStatus(true);
@@ -408,20 +458,15 @@ public class TelaJogoController implements Initializable {
                     }
                 }
             }
-        }  
-        
-        // WAIT
-        
-        if(this.quantidadeVirada==2) {
-            this.virarCartas();
-            this.jogadaComputador();
         }
+        
     }
 
     @FXML
     private void im4Clicked(MouseEvent event) {
         if(this.grade.getGrade()[3][0].isEncontrouPar()) return;
         if(this.grade.getGrade()[3][0].getStatus())      return;
+        if(this.lblJogadorAtual.getText().equals("Computador")) return;
         
         this.im4.setImage(this.grade.getGrade()[3][0].getImagem());
         this.grade.getGrade()[3][0].alterarStatus(true);
@@ -446,18 +491,13 @@ public class TelaJogoController implements Initializable {
             }
         }
         
-        // WAIT
-        
-        if(this.quantidadeVirada==2) {
-            this.virarCartas();
-            this.jogadaComputador();
-        }
     }
 
     @FXML
     private void im5Clicked(MouseEvent event) {
         if(this.grade.getGrade()[0][1].isEncontrouPar()) return;
         if(this.grade.getGrade()[0][1].getStatus())      return;
+        if(this.lblJogadorAtual.getText().equals("Computador")) return;
         
         this.im5.setImage(this.grade.getGrade()[0][1].getImagem());
         this.grade.getGrade()[0][1].alterarStatus(true);
@@ -482,18 +522,13 @@ public class TelaJogoController implements Initializable {
             }
         }
         
-        // WAIT
-        
-        if(this.quantidadeVirada==2) {
-            this.virarCartas();
-            this.jogadaComputador();
-        }
     }
 
     @FXML
     private void im6Clicked(MouseEvent event) {
         if(this.grade.getGrade()[1][1].isEncontrouPar()) return;
         if(this.grade.getGrade()[1][1].getStatus())      return;
+        if(this.lblJogadorAtual.getText().equals("Computador")) return;
         
         this.im6.setImage(this.grade.getGrade()[1][1].getImagem());
         this.grade.getGrade()[1][1].alterarStatus(true);
@@ -518,18 +553,13 @@ public class TelaJogoController implements Initializable {
             }
         }
         
-        // WAIT
-        
-        if(this.quantidadeVirada==2) {
-            this.virarCartas();
-            this.jogadaComputador();
-        }
     }
 
     @FXML
     private void im7Clicked(MouseEvent event) {
         if(this.grade.getGrade()[2][1].isEncontrouPar()) return;
         if(this.grade.getGrade()[2][1].getStatus())      return;
+        if(this.lblJogadorAtual.getText().equals("Computador")) return;
         
         this.im7.setImage(this.grade.getGrade()[2][1].getImagem());
         this.grade.getGrade()[2][1].alterarStatus(true);
@@ -554,18 +584,13 @@ public class TelaJogoController implements Initializable {
             }
         }
         
-        // WAIT
-        
-        if(this.quantidadeVirada==2) {
-            this.virarCartas();
-            this.jogadaComputador();
-        }
     }
 
     @FXML
     private void im8Clicked(MouseEvent event) {
         if(this.grade.getGrade()[3][1].isEncontrouPar()) return;
         if(this.grade.getGrade()[3][1].getStatus())      return;
+        if(this.lblJogadorAtual.getText().equals("Computador")) return;
         
         this.im8.setImage(this.grade.getGrade()[3][1].getImagem());
         this.grade.getGrade()[3][1].alterarStatus(true);
@@ -589,13 +614,61 @@ public class TelaJogoController implements Initializable {
                 }
             }
         }
+    }
+    
+    private synchronized void release() {
+        if(this.quantidadeVirada==2) lblJogadorAtual.setText("Computador");
         
-        // WAIT
+        try {
+            this.wait(2000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(TelaJogoController.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         if(this.quantidadeVirada==2) {
             this.virarCartas();
-            this.jogadaComputador();
+            new Thread(t1).start();
         }
+    }
+
+    @FXML
+    private void im1Released(MouseEvent event) {
+        if(this.quantidadeVirada==2) this.release();
+    }
+
+    @FXML
+    private void im2Released(MouseEvent event) {
+        if(this.quantidadeVirada==2) this.release();
+    }
+
+    @FXML
+    private void im3Released(MouseEvent event) {
+        if(this.quantidadeVirada==2) this.release();
+    }
+
+    @FXML
+    private void im4Released(MouseEvent event) {
+        if(this.quantidadeVirada==2) this.release();
+    }
+
+    @FXML
+    private void im5Released(MouseEvent event) {
+        if(this.quantidadeVirada==2) this.release();
+    }
+
+    @FXML
+    private void im6Released(MouseEvent event) {
+        if(this.quantidadeVirada==2) this.release();
+    }
+
+    @FXML
+    private void im7Released(MouseEvent event) {
+        if(this.quantidadeVirada==2) this.release();
+    }
+
+    @FXML
+    private void im8Released(MouseEvent event) {
+        if(this.quantidadeVirada==2) this.release();
     }
     
 }
